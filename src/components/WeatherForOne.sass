@@ -1,0 +1,56 @@
+.modal
+	background-color: #f0f0f0
+	border-radius: 3px
+	box-shadow: 0 0 15px rgba(0,0,0,.3)
+	padding: 20px
+	position: relative
+	min-width: 1000px
+	max-width: 1200px
+	max-height: 100vh
+	overflow-y: scroll-y
+	.x-btn
+		color: #cc0000
+		position: absolute
+		right: 10px
+		top: 6px
+		cursor: pointer
+	&-wrap
+		width: 100%
+		height: 100vh
+		display: flex
+		position: fixed
+		top: 0
+		left: 0
+		background-color: rgba(242,134,121,.7)
+		justify-content: center
+		align-items: center
+
+.one-city-weather-list
+	list-style-type: none
+	border-radius: 3px
+	padding: 10px
+	display: flex
+	flex-wrap: wrap	
+	h2
+		margin: 0
+	.list-item
+		color: #f0f0f0
+		width: 180px
+		display: block
+		margin: 5px
+		padding: 10px
+		border-radius: 3px
+		box-shadow: 0 0 15px rgba(0,0,0,.4)
+		height: 100px
+		.date
+			font-size: 24px
+			font-weight: 600
+		p
+			margin: 0
+		&:nth-child(odd)
+			background-color: #3498db
+		&:nth-child(even)
+			background-color: #f28679
+		.weather-pic
+			float: left
+			margin-right: 5px

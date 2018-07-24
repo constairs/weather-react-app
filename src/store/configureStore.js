@@ -1,4 +1,6 @@
-import { createStore, applyMiddleware } from 'redux'
+import { createStore, applyMiddleware, compose } from 'redux'
+// import { autoRehydrate } from 'redux-persist'
+// import { composeWithDevTools } from 'redux-devtools-extension'
 import rootReducer from '../reducers'
 import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'

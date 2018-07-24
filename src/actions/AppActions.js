@@ -1,16 +1,18 @@
 import {
 	GET_WEATHER_REQUEST,
 	GET_WEATHER_SUCCESS,
-	GET_WEATHER_FAIL
+	GET_WEATHER_FAIL,
+	SET_FAVORITE_CITY,
+	GET_WEATHER_FOR_ONE_REQUEST,
+	GET_WEATHER_FOR_ONE_SUCCESS,
+	GET_WEATHER_FOR_ONE_FAIL
 } from '../constants/App'
 
-function getWeatherFromOWM(city) {
-
+function getWeatherFromOWM(cityId) {
 	return new Promise((resolve, reject) => {
 		
 		let xhr = new XMLHttpRequest()
-		xhr.open("GET", `http://api.openweathermap.org/data/2.5/forecast?id=${city.value}&lang=ru&APPID=120438da9a454938df5c099b36d2c1f2`, true)
-
+		xhr.open("GET", `http://api.openweathermap.org/data/2.5/forecast?id=${cityId}&cnt=24&units=metric&lang=ru&APPID=120438da9a454938df5c099b36d2c1f2`, true)
 		xhr.onload = () => {
 			if(xhr.status !== 200) {
 				reject(xhr.statusText)
@@ -18,13 +20,13 @@ function getWeatherFromOWM(city) {
 			if(xhr.readyState === 4 && xhr.status === 200) {
 				let data = JSON.parse(xhr.responseText)
 				resolve(data)
-				console.log(data)
 			}
 		}
 		xhr.onerror = () => reject(Error("There was a network error."))
 		xhr.send()
 	})
 }
+
 
 function getIdsFromCitiesArr(arr) {
 	arr = arr.map((cur, i) => {
@@ -34,9 +36,7 @@ function getIdsFromCitiesArr(arr) {
 }
 
 function getWeatherForFav(cities) {
-
 	cities = getIdsFromCitiesArr(cities)
-	console.log(cities)
 
 	return new Promise((resolve, reject) => {
 
@@ -58,16 +58,14 @@ function getWeatherForFav(cities) {
 	})
 }
 
-
-export function getWeather(city) {
+export function getWeatherForFavorites(favorites) {
 	return (dispatch) => {
 		dispatch({
 			type: GET_WEATHER_REQUEST,
-			payload: city
+			payload: favorites
 		})
-	
-		getWeatherFromOWM(city).then((data) => {
-			console.log(data)
+
+		getWeatherForFav(favorites).then((data) => {
 			dispatch({
 				type: GET_WEATHER_SUCCESS,
 				payload: data
@@ -79,32 +77,36 @@ export function getWeather(city) {
 				payload: err
 			})
 		})
-
-
 	}
 }
 
-export function getWeatherForFavorites(cities) {
-
+export function setFavoriteCity(cities) {
 	return (dispatch) => {
 		dispatch({
-			type: GET_WEATHER_REQUEST,
+			type: SET_FAVORITE_CITY,
 			payload: cities
 		})
+	}
+}
 
-		getWeatherForFav(cities).then((data) => {
-			console.log(data)
+export function getWeatherForOne(cityId) {
+	return (dispatch) => {
+		dispatch({
+			type: GET_WEATHER_FOR_ONE_REQUEST,
+			payload: cityId
+		})
+
+		getWeatherFromOWM(cityId).then((data) => {
 			dispatch({
-				type: GET_WEATHER_SUCCESS,
+				type: GET_WEATHER_FOR_ONE_SUCCESS,
 				payload: data
 			})
 
 		}).catch(err => {
 			dispatch({
-				type: GET_WEATHER_FAIL,
+				type: GET_WEATHER_FOR_ONE_FAIL,
 				payload: err
 			})
 		})
-
 	}
 }

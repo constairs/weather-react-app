@@ -1,56 +1,43 @@
 import {
 	GET_WEATHER_REQUEST,
 	GET_WEATHER_SUCCESS,
-	GET_WEATHER_FAIL
+	GET_WEATHER_FAIL,
+	SET_FAVORITE_CITY,
+	GET_WEATHER_FOR_ONE_REQUEST,
+	GET_WEATHER_FOR_ONE_SUCCESS,
+	GET_WEATHER_FOR_ONE_FAIL
 } from '../constants/App'
 
 const initialState = {
-	weather: {
-	"city":{
-	"id":1851632,
-	"name":"Shuzenji",
-	"coord":{
-		"lon":138.933334,
-		"lat":34.966671
-		},
-	"country":"JP",
-	},
-	"cod":"200",
-	"message":0.0045,
-	"cnt":38,
-	"list":[{
-        "dt":1406106000,
-        "main":{
-            "temp":298.77,
-            "temp_min":298.77,
-            "temp_max":298.774,
-            "pressure":1005.93,
-            "sea_level":1018.18,
-            "grnd_level":1005.93,
-            "humidity":87,
-            "temp_kf":0.26
-          },
-        "weather":[{"id":804,"main":"Clouds","description":"overcast clouds","icon":"04d"}],
-        "clouds":{"all":88},
-        "wind":{"speed":5.71,"deg":229.501},
-        "sys":{"pod":"d"},
-        "dt_txt":"2014-07-23 09:00:00"}
-       ]
-},
+	favorites: [],
+	weather: {},
 	fetching: false,
-	error: ''
+	error: '',
+	weathersCities: {}
 }
 
 export default function app(state = initialState, action) {
 
 	switch (action.type) {
 		case GET_WEATHER_REQUEST:
-			return { ...state, city: action.payload, fetching: true }
+			return { ...state, favorites: action.payload, fetching: true }
 
 		case GET_WEATHER_SUCCESS:
-			return { ...state, weather: action.payload, fetching: false }
+			return { ...state, weather: action.payload, fetching: false, error: '' }
 
 		case GET_WEATHER_FAIL:
+			return { ...state, error: action.payload.message, fetching: false }
+
+		case SET_FAVORITE_CITY:
+			return { ...state, favorites: action.payload, fetching: false }
+
+		case GET_WEATHER_FOR_ONE_REQUEST:
+			return { ...state, cityId: action.payload, fetching: true }
+
+		case GET_WEATHER_FOR_ONE_SUCCESS:
+			return { ...state, weathersCities: action.payload, fetching: false, error: '' }
+
+		case GET_WEATHER_FOR_ONE_FAIL:
 			return { ...state, error: action.payload.message, fetching: false }
 
 		default:

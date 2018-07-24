@@ -1,10 +1,57 @@
 *
 	box-sizing: border-box
 
+@import url('https://fonts.googleapis.com/css?family=Press+Start+2P&subset=cyrillic')
+@import url('https://fonts.googleapis.com/css?family=Pacifico')
+
 body
 	color: #2b2b2b
-	background-color: #89EBEB
+	background-color: #f28679
 	font-family: 'Roboto', sans-serif
+
+.btn
+	display: inline-block
+	border: none
+	background-color: #3498db
+	border-radius: 3px
+	padding: 8px 20px
+	border-bottom: 3px solid #2980b9
+	color: #ffffff
+	transition: all .2s
+	font-weight: 600
+	&:hover
+		background-color: #5EAEE3
+	&:focus
+		outline: none
+	&:disabled
+		background-color: #ccc
+		border-bottom: 3px solid #999999
+		color: #999999
+
+.main-title
+	font-family: 'Pacifico', cursive
+	font-size: 46px
+	text-align: center
+	color: #ffffff
+
+.buttons-container
+	text-align: center
+	margin-top: 30px
+	.btn
+		margin: 0 10px
+
+h2
+	font-size: 22px
+	font-weight: 300
+	text-align: center
+	
+.message
+	font-style: italic
+	text-align: center
+	font-size: 16px
 
 @import 'components/WeatherList'
 @import 'components/WeatherItem'
+@import 'components/FavoriteCities'
+@import 'components/CityListItem'
+@import 'components/WeatherForOne'

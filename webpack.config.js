@@ -11,8 +11,8 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].[hash].js'
   },
-  mode: 'development',
-  // mode: 'production',
+  // mode: 'development',
+  mode: 'production',
   devServer: {
     contentBase: './dist',
     compress: true,
@@ -31,8 +31,8 @@ module.exports = {
       {
         test: /\.(sa|sc|c)ss$/,
         use: [
-					'style-loader',
-					// MiniCssExtractPlugin.loader,
+					// 'style-loader',
+					MiniCssExtractPlugin.loader,
 					'css-loader',
 					'postcss-loader',
 					'sass-loader'

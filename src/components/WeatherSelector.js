@@ -1,122 +1,106 @@
 import React, { Component } from 'react'
-import { hot } from 'react-hot-loader'
 import Select from 'react-select'
 import 'react-select/dist/react-select.css'
+import transleteToCyr from '../utils/translete.js'
+
+const cities = require('../../etc/cities.json')
 
 function getWeatherFromOWM(url) {
-	// return new Promise((resolve, reject) => {
-
-	// 	let xhr = new XMLHttpRequest()
-	// 	xhr.overrideMimeType("application/json")
-	// 	xhr.open("GET", url, true)
-	// 	xhr.setRequestHeader('Access-Control-Allow-Origin', '*')
-	// 	xhr.onload = () => {
-	// 		if (xhr.status !== 200) {
-	// 			reject(xhr.statusText)
-	// 		}
-	// 		if (xhr.readyState === 4 && xhr.status === 200) {
-	// 			let data = JSON.parse(xhr.responseText)
-	// 			this.setState({ cities: res })
-	// 			resolve(data)
-	// 		}
-	// 	}
-	// 	xhr.onerror = () => reject(Error("There was a network error."))
-	// 	xhr.send()
-
-	// })
-
-	return [{
-		"id": 1507220,
-		"name": "Dovol’noye",
-		"country": "RU",
-		"coord": {
-			"lon": 79.667267,
-			"lat": 54.496498
-		}
-	},
-		{
-			"id": 8222846,
-			"name": "Solnechnaya",
-			"country": "RU",
-			"coord": {
-				"lon": 131.732803,
-				"lat": 49.237499
-			}
-		},
-		{
-			"id": 6268219,
-			"name": "Kobrino",
-			"country": "RU",
-			"coord": {
-				"lon": 30.11417,
-				"lat": 59.424721
-			}
-		},
-		{
-			"id": 6845986,
-			"name": "Mironovka",
-			"country": "RU",
-			"coord": {
-				"lon": 44.214001,
-				"lat": 54.499802
-			}
-		},
-		{
-			"id": 519188,
-			"name": "Novinki",
-			"country": "RU",
-			"coord": {
-				"lon": 37.666668,
-				"lat": 55.683334
-			}
-		}]
-
+	return cities
 }
 
 class WeatherSelector extends Component {
 
-	state = {
-		selectedOption: '',
-		cities: []
+	constructor(props) {
+		super(props)
+		this.state = {
+			selectedOption: null,
+			cities: [],
+			count: this.props.count,
+			disabledBtn: this.props.count > 20 || this.props.count < 1 ? true : false,
+			disabledBtnAdd: this.props.count === 20 ? true : false
+		}
 	}
 
 	componentDidMount() {
 
 		let cities = getWeatherFromOWM('http://localhost:9000/etc/cities.json').map((i) => {
-			return { value: i.id, label: i.name }
+			return { value: i.id, label: transleteToCyr(i.name) }
 		})
+		function compare(a, b) {
+			if(a.label < b.label)
+				return -1
+			if(a.label > b.label)
+				return 1
+			return 0
+		}
+		cities = cities.sort(compare)
 		this.setState({ cities: cities})
 
 	}
 
 	handleSelectChange = (selectedOption) => {
-		this.setState({ selectedOption: selectedOption })
-		console.log(selectedOption)
+		if (this.state.count === 20) {
+			this.setState({ selectedOption: selectedOption, disabledBtnAdd: true })
+		} else {
+			this.setState({selectedOption: selectedOption, disabledBtnAdd: false })
+		}
 	}
 
-	handleBtnClick = (e) => {
-		// (e.name === 'addCity')
-		// 	this.props.onSelectCity(this.state.selectedOption)
-		(e.name === 'getForecast')
-			this.props.onGetWeather(this.state.cities)
+	handleBtnClick = (event) => {
+		if (event.target.name === 'addCity') {
+			this.props.onSelectCity(this.state.selectedOption)
+			this.setState({ selectedOption: false})
+		}
+			
+		if (event.target.name === 'getForecast') {
+			this.props.onGetWeather()
+		}	
+	}
+
+	static getDerivedStateFromProps(nextProps, PrevState) {
+		if (nextProps.count !== PrevState.count) {
+			if (nextProps.count > 20 || nextProps.count < 1) {
+				return {
+					count: nextProps.count,
+					disabledBtn: true
+				}
+			} else {
+				return {
+					count: nextProps.count,
+					disabledBtn: false
+				}
+			}
+			
+		}
+		return null
 	}
 
 	render() {
 		const { selectedOption, cities } = this.state
-
 		return (
 				<div className="container">
 					<Select
 					value={ selectedOption }
 					onChange={this.handleSelectChange}
-						options={ cities }
+					options={ cities }
+					placeholder="Выберите город"
 					/>
-				<button className="btn" name="addCity" onClick={this.handleBtnClick}> Добавить город в избраннное</button>
-				<button name="getForecast" onClick={this.handleBtnClick}>Прогноз</button>
+				{ this.props.count === 20 ? 
+					<p className="message">Не более 20 городов в избранном</p>
+					: this.props.count < 1 || this.props.count < 21 ?
+					<p className="message">Добавляйте города в список избранного</p>
+					: null
+				}
+				<div className="buttons-container">
+					<button className="btn" name="addCity" disabled={!this.state.selectedOption || this.state.disabledBtnAdd } onClick={this.handleBtnClick}> Добавить в избраннное</button>
+					<button className="btn" name="getForecast" disabled={this.state.disabledBtn} onClick={this.handleBtnClick}>Прогноз</button>
+				</div>
+
 				</div>
 		)
 	}
+
 }
 
-// export default hot(module)(App)
 export default WeatherSelector

@@ -7,6 +7,10 @@ class WeatherList extends Component {
 		super(props)
 	}
 
+	handleOpenCity = (id) => {
+		this.props.onOpenCity(id)
+	}
+
 	render() {
 		const { weather } = this.props.data
 
@@ -15,9 +19,8 @@ class WeatherList extends Component {
 				{
 					weather.list ?
 						weather.list.map((cur, i) => {
-							return <WeatherItem weather={cur} key={i} />
+							return <WeatherItem onOpenCity={this.handleOpenCity} weather={cur} key={i} />
 						})
-						// <div>Meh</div>
 					:
 					<p>Ничего нет</p>
 				}
